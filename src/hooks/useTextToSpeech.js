@@ -89,14 +89,25 @@ export function useTextToSpeech() {
       setErrorMessage("Por favor, selecciona un archivo .txt");
       setCurrentState(STATES.ERROR);
       setSelectedFile(null);
+      // Limpiar el input para permitir seleccionar otro archivo
+      if (e.target) {
+        e.target.value = "";
+      }
       return;
     }
 
+    // Resetear todo al seleccionar un nuevo archivo
     setSelectedFile(file);
     setErrorMessage("");
     setCurrentState(STATES.IDLE);
     setDownloadUrl(null);
     setJobId(null);
+    setDownloadSuccess(false);
+    // Limpiar cualquier polling activo
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
   };
 
   const handleConvert = async () => {

@@ -1,16 +1,24 @@
 import { STATES } from "../constants";
+import { useRef, useEffect } from "react";
 
 export default function FileUpload({
   selectedFile,
   currentState,
   onFileChange,
 }) {
+  const fileInputRef = useRef(null);
+
+  // Resetear el input cuando se resetea el estado
+  useEffect(() => {
+    if (currentState === STATES.IDLE && !selectedFile && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [currentState, selectedFile]);
+
   const handleClick = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".txt";
-    input.onchange = (e) => onFileChange(e);
-    input.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -128,6 +136,7 @@ export default function FileUpload({
           </div>
         )}
         <input
+          ref={fileInputRef}
           type="file"
           accept=".txt"
           onChange={onFileChange}
